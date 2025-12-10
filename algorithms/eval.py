@@ -1,5 +1,3 @@
-from pogema_toolbox.eval_utils import initialize_wandb, save_evaluation_results
-
 from pathlib import Path
 from typing import Literal
 
@@ -24,7 +22,7 @@ PROJECT_NAME = 'Benchmark'
 BASE_PATH = Path('experiments')
 MODE: Literal["mapf", "lmapf"] = 'mapf'
 
-def main(disable_wandb=True):
+def main():
     env_cfg_name = 'Environment'
     ToolboxRegistry.register_env(env_cfg_name, create_env_base, Environment)
     
@@ -58,7 +56,6 @@ def main(disable_wandb=True):
             evaluation_config = yaml.safe_load(f)
         
         eval_dir = BASE_PATH / folder
-        initialize_wandb(evaluation_config, eval_dir, disable_wandb, PROJECT_NAME)
         evaluation(evaluation_config, eval_dir=eval_dir)
         save_evaluation_results(eval_dir)
 
