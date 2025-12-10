@@ -13,18 +13,13 @@ This repository is organized into several key areas:
 
 ## Installation
 
-### POGEMA Environment
-Install the POGEMA environment:
-```bash
-cd pogema
-python setup.py install
-```
+It’s recommended to use uv, which can be installed following the instructions in the official guide: https://docs.astral.sh/uv/getting-started/installation
 
-### POGEMA Toolbox
-Install additional tools for POGEMA:
+To create and activate virtual environemnt:
+
 ```bash
-cd pogema-toolbox
-python setup.py install
+uv venv --python 3.10
+source .venv/bin/activate
 ```
 
 ### Algorithms
@@ -35,7 +30,7 @@ Explore integrated algorithms located in the `algorithms` directory:
   ```
 - Install necessary dependencies:
   ```bash
-  pip3 install -r docker/requirements.txt
+  uv pip install -r docker/requirements.txt
   ```
 - Optionally, build a Docker image to containerize the environment:
   ```bash
