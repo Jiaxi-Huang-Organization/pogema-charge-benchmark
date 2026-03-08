@@ -18,6 +18,7 @@ CMakeCache.txt
 
 # Distribution / packaging
 .Python
+.venv
 build/
 develop-eggs/
 dist/

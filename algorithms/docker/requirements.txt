@@ -14,9 +14,10 @@ matplotlib
 seaborn
 tabulate>=0.8.7,<=0.8.10
 protobuf==3.20.3
-typing-extensions==4.5.0
+typing-extensions==4.5.0; python_version < '3.10'
+typing-extensions>=4.15.0; python_version >= '3.10'
 importlib-metadata==4.13.0
 dask[distributed]
 loguru
-git+https://github.com/Cognitive-AI-Systems/pogema-toolbox.git@aeefc2cd917
-git+https://github.com/Cognitive-AI-Systems/pogema.git@4ca698a
+git+https://github.com/Jiaxi-Huang-Organization/pogema-charge-toolbox.git
+git+https://github.com/Jiaxi-Huang-Organization/pogema-charge.git
