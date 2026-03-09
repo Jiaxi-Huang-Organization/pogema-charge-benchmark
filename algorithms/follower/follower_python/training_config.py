@@ -30,7 +30,9 @@ class Environment(BaseModel, ):
     worker_index: int = None
     vector_index: int = None
     env_id: int = None
+    num_agents: Optional[int] = None
     target_num_agents: Optional[int] = None
+    targets_xy: Optional[list] = None
     agent_bins: Optional[list] = [64, 128, 256, 256]
     use_maps: bool = True
 
@@ -40,6 +42,7 @@ class Environment(BaseModel, ):
 class EnvironmentMazes(Environment):
     env: Literal['PogemaMazes-v0'] = "PogemaMazes-v0"
     use_maps: bool = True
+    num_agents: Optional[int] = 128
     target_num_agents: Optional[int] = 256
     agent_bins: Optional[list] = [128, 256, 256, 256]
     grid_config: DecMAPFConfig = DecMAPFConfig(on_target='restart', max_episode_steps=512)
@@ -53,7 +56,6 @@ class EnvironmentMazes(Environment):
     persistent: bool = False
     auto_reset: Optional[bool] = None
     map_name: str = None
-    
 
 
 class Experiment(BaseModel):
