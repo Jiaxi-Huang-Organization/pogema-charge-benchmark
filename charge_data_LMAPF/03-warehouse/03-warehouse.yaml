@@ -1,0 +1,89 @@
+algorithms:
+  ChargerAppo:
+    name: ChargerAppo
+    num_process: 4
+    parallel_backend: 'balanced_dask'
+environment:
+  collision_system: soft
+  map_name: wfi_warehouse
+  max_episode_steps: 
+    grid_search: [64, 128, 256]
+  name: Environment
+  num_agents:
+    grid_search: [32, 64, 96, 128, 160, 192]
+  agent_per_charge: 4
+  observation_type: POMAPF
+  on_target: restart
+  seed: 
+    grid_search: [0, 1, 2, 4, 8]
+  with_animation: false
+results_views:
+  agent_throughput:
+    type: plot
+    x: num_agents
+    y: avg_throughput
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, ChargerAppo(full), ChargerAppo(infra), ChargerAppo(new_obs), ChargerAppo(wo_battery), ChargerAppo(wo_penalty)] #[RHCR, DCC, SCRIMP, Follower]
+    name: WareHouse
+    ticks: [32, 64, 96, 128, 160, 192]
+  episode_throughput:
+    type: plot
+    x: max_episode_steps
+    y: avg_throughput
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, ChargerAppo(full), ChargerAppo(infra), ChargerAppo(new_obs), ChargerAppo(wo_battery), ChargerAppo(wo_penalty)] #[RHCR, DCC, SCRIMP, Follower]
+    name: WareHouse
+    ticks: [64, 128, 256]
+  agents_depletion_rate:
+    type: plot
+    x: max_episode_steps
+    y: agents_depletion_rate
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, ChargerAppo(full), ChargerAppo(infra), ChargerAppo(new_obs), ChargerAppo(wo_battery), ChargerAppo(wo_penalty)] #[RHCR, DCC, SCRIMP, Follower]
+    name: WareHouse
+    ticks: [64, 128, 256]
+  valid_episode_relative:
+    type: plot
+    x: max_episode_steps
+    y: valid_episode_relative
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, ChargerAppo(full), ChargerAppo(infra), ChargerAppo(new_obs), ChargerAppo(wo_battery), ChargerAppo(wo_penalty)] #[RHCR, DCC, SCRIMP, Follower]
+    name: WareHouse
+    ticks: [64, 128, 256]
+  runtime:
+    type: plot
+    x: num_agents
+    y: runtime
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, ChargerAppo(full), ChargerAppo(infra), ChargerAppo(new_obs), ChargerAppo(wo_battery), ChargerAppo(wo_penalty)] #[RHCR, DCC, SCRIMP, Follower]
+    name: WareHouse
+    ticks: [32, 64, 96, 128, 160, 192]
+TabularView1:
+  drop_keys: [seed, map_name]
+  print_results: true
+  type: tabular

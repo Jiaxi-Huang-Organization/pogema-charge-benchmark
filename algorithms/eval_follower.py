@@ -10,10 +10,10 @@ from create_env import create_env_base
 #from rhcr_cpp.rhcr import RHCRInference, RHCRConfig
 from pogema_toolbox.create_env import Environment
 from scrimp.inference import SCRIMPInference, SCRIMPInferenceConfig
-#from follower.follower_python.inference import FollowerInference, FollowerInferenceConfig
-#from follower.follower_python.preprocessing import follower_preprocessor
+from follower.follower_python.inference import FollowerInference, FollowerInferenceConfig
+from follower.follower_python.preprocessing import follower_preprocessor
 # from mamba.inference.utils import MAMBAInference, MAMBAInferenceConfig
-from lacam.inference import LacamInference, LacamInferenceConfig
+#from lacam.inference import LacamInference, LacamInferenceConfig
 #from mats_lp.inference import MATS_LPConfig, MATS_LPInference
 #from dcc.inference import DCCInference, DCCInferenceConfig
 

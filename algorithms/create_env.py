@@ -31,7 +31,6 @@ class ProvideFutureTargetsWrapper(Wrapper):
                 goals.append(cur_goal)
             all_goals.append(goals)
         return all_goals
-    
     def reset(self, **kwargs):
         observations, infos = self.env.reset(seed=self.env.grid_config.seed)
         observations[0]['after_reset'] = True
@@ -42,9 +41,17 @@ class ProvideFutureTargetsWrapper(Wrapper):
                 obs['global_lifelong_targets_xy'] = global_lifelong_targets_xy[idx]
         return observations, infos
 
+class ProvideGlobalObstacles(Wrapper):
+    def get_global_obstacles(self):
+        return self.grid.get_obstacles().astype(int).tolist()
+
+    def get_global_agents_xy(self):
+        return self.grid.get_agents_xy()
+
 def create_env_base(config):
     env = pogema_v0(grid_config=config)
     env = AgentsDensityWrapper(env)
+    env = ProvideGlobalObstacles(env)
     env = ProvideFutureTargetsWrapper(env)
     env = MultiMapWrapper(env)
     if config.with_animation:

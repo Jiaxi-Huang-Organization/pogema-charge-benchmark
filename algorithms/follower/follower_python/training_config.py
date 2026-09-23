@@ -30,7 +30,7 @@ class Environment(BaseModel, ):
     worker_index: int = None
     vector_index: int = None
     env_id: int = None
-    num_agents: Optional[int] = None
+    #num_agents: Optional[int] = None
     target_num_agents: Optional[int] = None
     targets_xy: Optional[list] = None
     agent_bins: Optional[list] = [64, 128, 256, 256]

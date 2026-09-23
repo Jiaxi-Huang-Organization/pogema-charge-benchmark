@@ -1,0 +1,91 @@
+algorithms:
+  Follower:
+    name: Follower
+    num_process: 4
+    parallel_backend: 'balanced_dask'
+environment:
+  collision_system: soft
+  map_name:
+    grid_search: [puzzle-00, puzzle-01, puzzle-02, puzzle-03, puzzle-04, puzzle-05,
+      puzzle-06, puzzle-07, puzzle-08, puzzle-09, puzzle-10, puzzle-11, puzzle-12,
+      puzzle-13, puzzle-14, puzzle-15]
+  max_episode_steps: 
+    grid_search: [64, 128, 256]
+  name: Environment
+  num_agents:
+    grid_search: [2, 3, 4]
+  agent_per_charge: 2
+  observation_type: MAPF
+  on_target: restart
+  seed:
+    grid_search: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  with_animation: false
+results_views:
+  agent_throughput:
+    type: plot
+    x: num_agents
+    y: avg_throughput
+    width: 5
+    height: 4
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, VDN, QMIX]
+    name: Puzzles
+    ticks: [2, 3, 4]
+  episode_throughput:
+    type: plot
+    x: max_episode_steps
+    y: avg_throughput
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, VDN, QMIX]
+    name: Puzzles
+    ticks: [64, 128, 256]
+  agents_depletion_rate:
+    type: plot
+    x: max_episode_steps
+    y: agents_depletion_rate
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower]
+    name: Puzzles
+    ticks: [64, 128, 256]
+  valid_episode_relative:
+    type: plot
+    x: max_episode_steps
+    y: valid_episode_relative
+    width: 5
+    height: 4
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower]
+    name: Puzzles
+    ticks: [64, 128, 256]
+  runtime:
+    type: plot
+    x: num_agents
+    y: runtime
+    width: 3
+    height: 2.5
+    line_width: 2
+    use_log_scale_x: True
+    legend_font_size: 8
+    font_size: 8
+    hue_order: [RHCR, DCC, SCRIMP, Follower, VDN, QMIX]
+    name: Puzzles
+    ticks: [2, 3, 4]
+TabularView1:
+  drop_keys: [seed, map_name]
+  print_results: true
+  type: tabular

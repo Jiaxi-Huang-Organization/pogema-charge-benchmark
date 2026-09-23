@@ -150,29 +150,46 @@ class LacamInference:
         agent_starts_xy = [obs['global_xy'] for obs in observations]
         agent_targets_xy = [obs['global_target_xy'] for obs in observations]
 
+        # Check agent battery status and filter out inactive/dead agents
+        # In pogema-charge, observations contain 'battery' field
+        # Agents with battery <= 0 are considered dead and should be skipped
+        agent_alive = []
+        for idx, obs in enumerate(observations):
+            # Check if battery field exists (pogema-charge env)
+            if 'battery' in obs:
+                alive = obs['battery'] > 0
+            else:
+                # Standard pogema env - assume all agents are alive
+                alive = True
+            agent_alive.append(alive)
+
         has_new_tasks = False
 
         processed_starts = set()
         processed_targets = set()
         if self.lacam_agents is None:
             self.lacam_agents = [LacamAgent(idx) for idx in range(len(observations))]
-        # Process old tasks
+        # Process old tasks - skip dead agents
         agent_tasks_dict = {}
         for idx, (start_xy, target_xy) in enumerate(zip(agent_starts_xy, agent_targets_xy)):
+            if not agent_alive[idx]:
+                continue  # Skip dead agents
             if self.lacam_agents[idx].is_new_goal(target_xy):
                 continue
             if start_xy == target_xy or target_xy in processed_targets:
                 near_target_xy = self._find_near_goal(start_xy, target_xy, map_array, processed_targets)
                 target_xy = near_target_xy
-                
+
             processed_starts.add(start_xy)
             processed_targets.add(target_xy)
-                
+
             agent_task = self.lacam_agents[idx].format_task_string(start_xy, target_xy, map_shape=map_array.shape)
             agent_tasks_dict[idx] = agent_task
-            
-        # Process new tasks
+
+        # Process new tasks - skip dead agents
         for idx, (start_xy, target_xy) in enumerate(zip(agent_starts_xy, agent_targets_xy)):
+            if not agent_alive[idx]:
+                continue  # Skip dead agents
             if not self.lacam_agents[idx].is_new_goal(target_xy):
                 continue
             if target_xy in processed_targets:
@@ -180,31 +197,45 @@ class LacamInference:
                 target_xy = near_target_xy
             self.lacam_agents[idx].set_new_goal(target_xy)
             has_new_tasks = True
-                
+
             processed_starts.add(start_xy)
             processed_targets.add(target_xy)
-                
+
             agent_task = self.lacam_agents[idx].format_task_string(start_xy, target_xy, map_shape=map_array.shape)
             agent_tasks_dict[idx] = agent_task
             
+        # Build task file with ONLY alive agents
+        # LaCAM expects N = number of tasks in scene file, so we only include alive agents
+        alive_indices = [idx for idx in range(len(self.lacam_agents)) if agent_alive[idx]]
+        
         task_file_content = "version 1\n"
-        for idx in range(len(self.lacam_agents)):
+        for idx in alive_indices:
+            if idx not in agent_tasks_dict:
+                # Alive agent without a task yet - wait at current position
+                start_xy = agent_starts_xy[idx]
+                target_xy = start_xy
+                agent_tasks_dict[idx] = self.lacam_agents[idx].format_task_string(start_xy, target_xy, map_shape=map_array.shape)
             task_file_content += agent_tasks_dict[idx]
 
-        if has_new_tasks:
+        num_alive = len(alive_indices)
+
+        if has_new_tasks and num_alive > 0:
             map_row = lambda row: ''.join('@' if x else '.' for x in row)
             map_content = '\n'.join(map_row(row) for row in map_array)
             map_file_content = f"type octile\nheight {map_array.shape[0]}\nwidth {map_array.shape[1]}\nmap\n{map_content}"
-            solved, lacam_results = self.lacam_lib.run_lacam(map_file_content, task_file_content, len(self.lacam_agents), self.cfg.timeouts)
+            # Pass only the number of alive agents to LaCAM
+            solved, lacam_results = self.lacam_lib.run_lacam(map_file_content, task_file_content, num_alive, self.cfg.timeouts)
             if solved:
                 agent_paths = self._parse_data(lacam_results)
             else:
                 agent_paths = [[agent_starts_xy[i] for _ in range(256)] for i in range(len(agent_starts_xy))] # if failed - agents just wait in start locations
             if agent_paths is not None:
-                for idx, agent_path in enumerate(agent_paths):
-                    self.lacam_agents[idx].set_path(agent_path)
+                for i, idx in enumerate(alive_indices):
+                    if i < len(agent_paths):
+                        self.lacam_agents[idx].set_path(agent_paths[i])
 
-        return [agent.get_action() for agent in self.lacam_agents]
+        # Return actions: dead agents return wait action (0)
+        return [agent.get_action() if agent_alive[idx] else 0 for idx, agent in enumerate(self.lacam_agents)]
 
     def after_step(self, dones):
         pass
